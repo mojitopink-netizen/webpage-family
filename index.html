@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1인 가족 생활노트</title>
+<meta name="description" content="누구든 언젠가는 1인 가족이 된다 — 1인 가족인, 1인 가족이 될 누구나를 위한 생활노트">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     색상·글꼴 설정 — 이 부분만 바꾸면 전체 분위기가 바뀜
+     ========================================================= */
+  :root{
+    --paper:#f7f1e6;      /* 배경: 노트 종이색 */
+    --paper-2:#efe6d5;    /* 보조 배경 */
+    --ink:#2b2622;        /* 본문 글자 */
+    --ink-soft:#6b625a;   /* 보조 글자 */
+    --accent:#e2643a;     /* 포인트: 따뜻한 주황 */
+    --accent-2:#3f7d6e;   /* 포인트2: 차분한 초록 */
+    --line:#d9cdb8;       /* 노트 줄 */
+    --card:#fffaf1;
+    --serif:"Gowun Batang", "Batang", serif;
+    --sans:"Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --max:1120px;
+    --radius:18px;
+    --header-bg:rgba(247,241,230,.92);
+    --quote-bg:#2b2622;   /* 관심사 큰 글상자 배경 */
+    --quote-ink:#f7f1e6;
+    --quote-point:#f3a37f;
+  }
+
+  /* ---------- 어둡게(다크 모드) 색상 ---------- */
+  :root[data-theme="dark"]{
+    --paper:#1d1a17;
+    --paper-2:#252120;
+    --ink:#efe7da;
+    --ink-soft:#b3a899;
+    --accent:#f08a5d;
+    --accent-2:#6fb5a3;
+    --line:#3d3631;
+    --card:#2a2522;
+    --header-bg:rgba(29,26,23,.92);
+    --quote-bg:#332c27;
+    --quote-ink:#efe7da;
+    --quote-point:#f3a37f;
+    color-scheme:dark;
+  }
+
+  /* 글씨 크기: 버튼으로 바뀌는 값 (기본 100%) */
+  html{font-size:var(--fs, 100%)}
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.75;
+    word-break:keep-all;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block}
+  a{color:inherit}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+  section{scroll-margin-top:72px}
+
+  /* ---------- 맨 위 D-day 띠 ---------- */
+  .dday{
+    background:var(--quote-bg);color:var(--quote-ink);
+    font-size:.92rem;line-height:1.5;text-align:center;
+    padding:10px 16px;transition:background-color .3s, color .3s;
+  }
+  .dday a{text-decoration:none;display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 10px}
+  .dday .d-name{font-weight:700}
+  .dday .d-count{
+    font-family:var(--serif);font-weight:700;font-size:1.15em;color:var(--quote-point);
+  }
+  .dday .d-date{opacity:.7;font-size:.9em}
+  .dday{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 16px}
+
+  /* D-day 오른쪽 서울 날씨 */
+  .weather{
+    display:inline-flex;align-items:center;gap:6px;
+    padding-left:16px;border-left:1px solid rgba(247,241,230,.25);
+  }
+  :root[data-theme="dark"] .weather{border-left-color:rgba(239,231,218,.25)}
+  .weather .w-city{opacity:.7;font-size:.9em}
+  .weather .w-temp{font-weight:700;color:var(--quote-point)}
+
+  /* ---------- 상단 메뉴 ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:var(--header-bg);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{
+    font-family:var(--serif);font-weight:700;font-size:1.15rem;
+    text-decoration:none;display:flex;align-items:center;gap:8px;
+  }
+  .logo-dot{width:12px;height:12px;border-radius:50%;background:var(--accent);display:inline-block}
+  .menu{display:flex;gap:28px;list-style:none}
+  .menu a{text-decoration:none;font-size:.95rem;color:var(--ink-soft);transition:color .2s}
+  .menu a:hover,.menu a.active{color:var(--accent)}
+  .nav-right{display:flex;align-items:center;gap:20px}
+
+  /* ---------- 글씨 크게·작게·어둡게 버튼 ---------- */
+  .tools{display:flex;gap:6px}
+  .tool{
+    font:inherit;font-size:13px;line-height:1;cursor:pointer;
+    padding:8px 12px;border-radius:999px;
+    background:var(--card);color:var(--ink);border:1px solid var(--line);
+    transition:background .2s, border-color .2s, color .2s;white-space:nowrap;
+  }
+  .tool:hover{border-color:var(--accent);color:var(--accent)}
+  .tool:disabled{opacity:.4;cursor:default;border-color:var(--line);color:var(--ink)}
+  .tool[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .tool .short{display:none}
+
+  body,header,.section,.about-card,.checklist,.act,.big-quote{transition:background-color .3s, color .3s, border-color .3s}
+
+  .menu-btn{
+    display:none;background:none;border:0;cursor:pointer;
+    width:40px;height:40px;position:relative;
+  }
+  .menu-btn span{
+    position:absolute;left:9px;right:9px;height:2px;background:var(--ink);
+    transition:transform .25s, opacity .25s;
+  }
+  .menu-btn span:nth-child(1){top:13px}
+  .menu-btn span:nth-child(2){top:19px}
+  .menu-btn span:nth-child(3){top:25px}
+  .menu-btn[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+  .menu-btn[aria-expanded="true"] span:nth-child(2){opacity:0}
+  .menu-btn[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+  /* ---------- 첫 화면 ---------- */
+  .hero{
+    padding:96px 0 88px;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0, transparent 39px, var(--line) 39px, var(--line) 40px);
+    background-position:0 20px;
+    position:relative;overflow:hidden;
+  }
+  .hero::before{ /* 노트 왼쪽 빨간 여백선 */
+    content:"";position:absolute;top:0;bottom:0;left:max(24px, calc(50% - var(--max)/2 + 8px));
+    width:2px;background:rgba(226,100,58,.35);
+  }
+  .hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:56px;align-items:center}
+  .eyebrow{
+    display:inline-block;font-size:.85rem;letter-spacing:.08em;
+    color:var(--accent-2);background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:4px 14px;margin-bottom:24px;
+  }
+  .hero h1{
+    font-family:var(--serif);font-weight:700;
+    font-size:clamp(2.2rem, 5.6vw, 4rem);line-height:1.3;letter-spacing:-.01em;
+  }
+  .hero h1 em{
+    font-style:normal;
+    background:linear-gradient(transparent 62%, rgba(226,100,58,.28) 62%);
+  }
+  .hero p.lead{margin-top:24px;font-size:1.1rem;color:var(--ink-soft);max-width:30em}
+  .btns{margin-top:36px;display:flex;flex-wrap:wrap;gap:12px}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:14px 26px;border-radius:999px;text-decoration:none;font-weight:500;
+    transition:transform .2s, box-shadow .2s, background .2s;
+    border:1.5px solid var(--ink);
+  }
+  .btn-primary{background:var(--ink);color:var(--paper)}
+  .btn-primary:hover{background:var(--accent);border-color:var(--accent);transform:translateY(-2px)}
+  .btn-ghost{background:transparent}
+  .btn-ghost:hover{background:var(--card);transform:translateY(-2px)}
+
+  /* ---------- 사진 자리표시자 ----------
+     실제 사진으로 바꾸려면:
+     <div class="ph">...</div> 를
+     <img class="photo" src="사진파일명.jpg" alt="사진 설명"> 으로 교체 */
+  .ph{
+    position:relative;aspect-ratio:4/5;border-radius:var(--radius);
+    background:
+      repeating-linear-gradient(45deg, var(--paper-2) 0 12px, var(--card) 12px 24px);
+    border:2px dashed var(--line);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    color:var(--ink-soft);font-size:.9rem;text-align:center;padding:16px;
+  }
+  .ph svg{width:44px;height:44px;opacity:.55}
+  .ph small{font-size:.78rem;opacity:.8}
+  .ph.wide{aspect-ratio:16/10}
+  .photo{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--radius)}
+  .hero-photo{transform:rotate(2deg);box-shadow:0 18px 40px -18px rgba(43,38,34,.35);border-radius:var(--radius)}
+  .hero-photo .ph{border-style:solid;background-color:var(--card)}
+  .tape{
+    position:absolute;top:-14px;left:50%;transform:translateX(-50%) rotate(-3deg);
+    width:110px;height:28px;background:rgba(63,125,110,.25);z-index:2;
+  }
+  .hero-photo-box{position:relative}
+
+  /* ---------- 공통 섹션 ---------- */
+  .section{padding:104px 0}
+  .section.alt{background:var(--paper-2)}
+  .sec-head{margin-bottom:48px}
+  .sec-num{font-family:var(--serif);color:var(--accent);font-size:.95rem;letter-spacing:.1em}
+  .sec-title{font-family:var(--serif);font-size:clamp(1.7rem, 3.4vw, 2.4rem);line-height:1.35;margin-top:6px}
+
+  /* 소개 */
+  .about-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:center}
+  .about-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:40px;position:relative;
+  }
+  .about-card .label{font-size:.85rem;color:var(--ink-soft)}
+  .about-card .name{font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.2rem);margin:6px 0 20px;line-height:1.4}
+  .about-card .note{
+    border-top:1px dashed var(--line);padding-top:18px;color:var(--ink-soft);font-size:.95rem
+  }
+  .todo{color:var(--accent);font-weight:500}
+
+  /* 관심사 */
+  .interest{
+    display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch;
+  }
+  .big-quote{
+    background:var(--quote-bg);color:var(--quote-ink);border-radius:var(--radius);
+    padding:48px;display:flex;flex-direction:column;justify-content:space-between;min-height:280px;
+  }
+  .big-quote .q{font-family:var(--serif);font-size:clamp(1.6rem,3.2vw,2.3rem);line-height:1.45}
+  .big-quote .q span{color:var(--quote-point)}
+  .big-quote .tag{font-size:.85rem;opacity:.7}
+  .checklist{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:36px 36px 28px;
+  }
+  .checklist h3{font-family:var(--serif);font-size:1.2rem;margin-bottom:6px}
+  .checklist .hint{font-size:.88rem;color:var(--ink-soft);margin-bottom:18px}
+  .checklist ul{list-style:none}
+  .checklist li{
+    display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);
+    color:var(--ink-soft);cursor:pointer;user-select:none;
+  }
+  .checklist li:last-child{border-bottom:0}
+  .box{
+    flex:0 0 20px;height:20px;border:1.5px solid var(--ink-soft);border-radius:5px;
+    display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s;
+  }
+  .checklist li.on .box{background:var(--accent-2);border-color:var(--accent-2)}
+  .checklist li.on .box::after{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+  .checklist li.on{color:var(--ink)}
+
+  /* 활동 */
+  .acts{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  .act{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    display:flex;flex-direction:column;transition:transform .25s, box-shadow .25s;
+  }
+  .act:hover{transform:translateY(-4px);box-shadow:0 18px 40px -22px rgba(43,38,34,.4)}
+  .act .ph{border-radius:0;border:0;border-bottom:2px dashed var(--line)}
+  .act-body{padding:28px 30px 32px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .act-no{
+    display:inline-block;align-self:flex-start;font-size:.8rem;font-weight:700;letter-spacing:.06em;
+    padding:3px 12px;border-radius:999px;
+  }
+  .act:nth-child(1) .act-no{background:rgba(226,100,58,.15);color:var(--accent)}
+  .act:nth-child(2) .act-no{background:rgba(63,125,110,.15);color:var(--accent-2)}
+  .act h3{font-family:var(--serif);font-size:1.4rem;line-height:1.45}
+  .act .key{font-family:var(--serif);font-size:1.05rem;color:var(--ink-soft)}
+  .act .pending{
+    margin-top:auto;font-size:.88rem;color:var(--ink-soft);
+    border-top:1px dashed var(--line);padding-top:14px;
+  }
+  .act .btn{align-self:flex-start;padding:10px 20px;font-size:.92rem;margin-top:6px}
+
+  /* 즐겁잖아 (사진 갤러리) */
+  .gallery{display:grid;grid-template-columns:repeat(3, 1fr);gap:24px}
+  .shot{margin:0}
+  .shot button{
+    display:block;width:100%;padding:0;border:0;cursor:zoom-in;background:var(--card);
+    border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 14px 30px -20px rgba(43,38,34,.45);
+    transition:transform .25s, box-shadow .25s;
+  }
+  .shot:nth-child(1) button{transform:rotate(-1.5deg)}
+  .shot:nth-child(3) button{transform:rotate(1.5deg)}
+  .shot button:hover,.shot button:focus-visible{transform:translateY(-6px) rotate(0);box-shadow:0 22px 40px -22px rgba(43,38,34,.55)}
+  .shot button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .shot img{width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .4s}
+  .shot button:hover img{transform:scale(1.04)}
+  .shot figcaption{
+    margin-top:14px;text-align:center;font-family:var(--serif);font-size:1rem;color:var(--ink-soft);
+  }
+
+  /* 사진 크게 보기 */
+  .lightbox{
+    position:fixed;inset:0;z-index:200;background:rgba(20,17,15,.95);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+    padding:56px 16px 24px;opacity:0;visibility:hidden;transition:opacity .25s, visibility .25s;
+  }
+  .lightbox.open{opacity:1;visibility:visible}
+  .lightbox img{max-width:min(1000px, 100%);max-height:calc(100vh - 160px);object-fit:contain;border-radius:8px}
+  .lightbox .lb-cap{color:#efe7da;font-family:var(--serif);font-size:1.05rem;text-align:center}
+  .lb-btn{
+    position:absolute;background:rgba(255,255,255,.12);color:#fff;border:0;cursor:pointer;
+    width:44px;height:44px;border-radius:50%;font-size:22px;line-height:44px;text-align:center;
+    transition:background .2s;
+  }
+  .lb-btn:hover{background:rgba(255,255,255,.25)}
+  .lb-close{top:14px;right:14px}
+  .lb-prev{left:14px;top:50%;transform:translateY(-50%)}
+  .lb-next{right:14px;top:50%;transform:translateY(-50%)}
+
+  /* 연락 */
+  .contact{
+    text-align:center;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(226,100,58,.12), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(63,125,110,.12), transparent 40%),
+      var(--paper);
+  }
+  .contact .sec-head{margin-bottom:28px}
+  .contact p{color:var(--ink-soft);margin-bottom:32px}
+  .mail{
+    display:inline-block;font-family:var(--serif);font-size:clamp(1.2rem,3.4vw,1.9rem);
+    text-decoration:none;border-bottom:2px solid var(--accent);padding-bottom:4px;word-break:break-all;
+  }
+  .mail:hover{color:var(--accent)}
+  .contact .btns{justify-content:center}
+  /* 방명록 */
+  .guest-card{
+    max-width:640px;margin:0 auto;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:36px;
+  }
+  .guest-card .hint{color:var(--ink-soft);font-size:.95rem;margin-bottom:24px}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+  .field label{font-weight:500;font-size:.95rem}
+  .field input,.field textarea{
+    font:inherit;color:var(--ink);background:var(--paper);
+    border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:100%;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .field textarea{min-height:120px;resize:vertical;line-height:1.6}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(226,100,58,.18)}
+  .field .count{align-self:flex-end;font-size:.8rem;color:var(--ink-soft)}
+  .hidden-field{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+  .guest-actions{display:flex;justify-content:flex-end}
+  .guest-actions .btn{cursor:pointer;font:inherit;font-weight:500}
+  .guest-actions .btn:disabled{opacity:.5;cursor:default;transform:none}
+  .guest-done{
+    display:none;text-align:center;padding:12px 0;font-family:var(--serif);font-size:1.15rem;
+  }
+  .guest-done.show{display:block}
+
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translate(-50%, 20px);opacity:0;
+    background:var(--ink);color:var(--paper);padding:12px 22px;border-radius:999px;font-size:.92rem;
+    transition:opacity .25s, transform .25s;pointer-events:none;z-index:99;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* ---------- 오른쪽 아래 BGM 버튼 (항상 같은 자리) ---------- */
+  .bgm{
+    position:fixed;right:20px;bottom:20px;z-index:150;
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 18px;border-radius:999px;cursor:pointer;
+    font:inherit;font-size:14px;font-weight:700;letter-spacing:.06em;line-height:1;
+    background:var(--card);color:var(--ink);border:1.5px solid var(--ink);
+    box-shadow:0 10px 24px -12px rgba(43,38,34,.5);
+    transition:background .2s, color .2s, transform .2s;
+  }
+  .bgm:hover{transform:translateY(-2px)}
+  .bgm:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .bgm[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+  .bgm .eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px}
+  .bgm .eq i{width:3px;height:4px;background:currentColor;border-radius:1px}
+  .bgm[aria-pressed="true"] .eq i{animation:eq .9s ease-in-out infinite}
+  .bgm[aria-pressed="true"] .eq i:nth-child(2){animation-delay:.2s}
+  .bgm[aria-pressed="true"] .eq i:nth-child(3){animation-delay:.4s}
+  @keyframes eq{0%,100%{height:4px}50%{height:14px}}
+  @media (prefers-reduced-motion: reduce){ .bgm .eq i{animation:none!important;height:8px} }
+
+  footer{border-top:1px solid var(--line);padding:28px 0 84px;font-size:.85rem;color:var(--ink-soft)}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  footer a{text-decoration:none}
+  footer a:hover{color:var(--accent)}
+
+  /* 스크롤 등장 효과 */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;transition:none}
+  }
+
+  /* ---------- 반응형 (태블릿·모바일) ---------- */
+  @media (max-width: 880px){
+    .hero{padding:64px 0 72px}
+    .hero-grid,.about-grid,.interest,.acts{grid-template-columns:1fr}
+    .hero-grid{gap:48px}
+    .hero-photo-box{max-width:320px;margin:0 auto;width:100%}
+    .about-grid{gap:32px}
+    .about-grid .ph{max-width:320px;margin:0 auto;width:100%}
+    .section{padding:76px 0}
+  }
+  @media (max-width: 1000px){
+    .logo{white-space:nowrap}
+    .menu{gap:18px}
+    .nav-right{gap:14px}
+    .tool .full{display:none}
+    .tool .short{display:inline}
+  }
+  @media (max-width: 720px){
+    .wrap{padding:0 16px}
+    .menu-btn{display:block}
+    .weather{padding-left:0;border-left:0}
+    .nav-right{gap:6px}
+    .logo{font-size:15px;white-space:nowrap;gap:6px}
+    .tool{padding:8px 10px}
+    .tool .full{display:none}
+    .tool .short{display:inline}
+    .menu{
+      position:absolute;top:64px;left:0;right:0;flex-direction:column;gap:0;
+      background:var(--paper);border-bottom:1px solid var(--line);
+      max-height:0;overflow:hidden;transition:max-height .3s ease;
+    }
+    .menu.open{max-height:400px}
+    .menu li a{display:block;padding:14px 16px;border-top:1px solid var(--line)}
+    .hero::before{left:10px}
+    .gallery{grid-template-columns:1fr;gap:32px}
+    .shot button,.shot:nth-child(1) button,.shot:nth-child(3) button{transform:none}
+    .lb-prev,.lb-next{top:auto;bottom:16px;transform:none}
+    .about-card,.checklist{padding:28px 24px}
+    .big-quote{padding:36px 28px;min-height:220px}
+    .btn{padding:13px 22px}
+    .btns .btn{flex:1 1 auto;justify-content:center}
+    .bgm{right:16px;bottom:16px;padding:11px 16px}
+    .guest-card{padding:28px 20px}
+    .guest-actions .btn{flex:1;justify-content:center}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== 맨 위 D-day 띠 =====================
+     행사 날짜를 바꾸려면 아래 data-date 값(YYYY-MM-DD)만 수정 -->
+<div class="dday" id="dday" data-date="2026-12-31" role="status">
+  <a href="#activities">
+    <span class="d-name">🎉 1인 가족 페스타까지</span>
+    <span class="d-count" id="ddayCount">D-?</span>
+    <span class="d-date">2026. 12. 31.</span>
+  </a>
+  <!-- 오늘 서울 날씨 (Open-Meteo, API 키 불필요) -->
+  <span class="weather" id="weather" title="날씨 정보: Open-Meteo">
+    <span class="w-city">서울</span>
+    <span class="w-icon" id="wIcon" aria-hidden="true">⏳</span>
+    <span class="w-desc" id="wDesc">날씨 불러오는 중</span>
+    <span class="w-temp" id="wTemp"></span>
+  </span>
+</div>
+
+<!-- ===================== 상단 메뉴 ===================== -->
+<header>
+  <nav class="wrap nav" aria-label="주요 메뉴">
+    <a href="#home" class="logo"><span class="logo-dot"></span>1인 가족 생활노트</a>
+    <div class="nav-right">
+      <ul class="menu" id="menu">
+        <li><a href="#about">소개</a></li>
+        <li><a href="#interest">관심사</a></li>
+        <li><a href="#activities">활동</a></li>
+        <li><a href="#fun">즐겁잖아</a></li>
+        <li><a href="#contact">연락하기</a></li>
+        <li><a href="#guestbook">방명록</a></li>
+      </ul>
+      <!-- 글씨 크게 · 글씨 작게 · 어둡게 버튼 (모바일에서는 짧은 글자로 표시) -->
+      <div class="tools" role="group" aria-label="화면 설정">
+        <button type="button" class="tool" id="fontUp" aria-label="글씨 크게"><span class="full">글씨 크게</span><span class="short">가+</span></button>
+        <button type="button" class="tool" id="fontDown" aria-label="글씨 작게"><span class="full">글씨 작게</span><span class="short">가−</span></button>
+        <button type="button" class="tool" id="themeBtn" aria-label="어둡게" aria-pressed="false"><span class="full">어둡게</span><span class="short">🌙</span></button>
+      </div>
+      <button class="menu-btn" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main>
+<!-- ===================== 첫 화면 ===================== -->
+<section class="hero" id="home">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">1인 가족인, 1인 가족이 될 누구나</span>
+      <h1>누구든 언젠가는<br><em>1인 가족</em>이 된다</h1>
+      <p class="lead">즐겁고 신나는 1인 가족의 생활노트</p>
+      <div class="btns">
+        <a href="#activities" class="btn btn-primary">워크숍 보기 →</a>
+        <a href="#contact" class="btn btn-ghost">연락하기</a>
+      </div>
+    </div>
+
+    <div class="hero-photo-box">
+      <div class="tape" aria-hidden="true"></div>
+      <div class="hero-photo">
+        <!-- 📷 대표 사진 자리: 아래 div를 <img class="photo" src="main.jpg" alt="대표 사진"> 으로 교체 -->
+        <div class="ph" role="img" aria-label="대표 사진 자리표시자">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg>
+          대표 사진
+          <small>main.jpg · 세로 4:5 권장</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 01 소개 ===================== -->
+<section class="section alt" id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-num">01 · ABOUT</div>
+      <h2 class="sec-title">소개</h2>
+    </div>
+    <div class="about-grid">
+      <!-- 📷 프로필 사진 자리: 아래 div를 <img class="photo" src="profile.jpg" alt="프로필 사진"> 으로 교체 -->
+      <div class="ph reveal" role="img" aria-label="프로필 사진 자리표시자">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        프로필 사진
+        <small>profile.jpg · 세로 4:5 권장</small>
+      </div>
+      <div class="about-card reveal">
+        <div class="label">이름 · 역할</div>
+        <div class="name">즐겁고 신나는 1인 가족</div>
+        <div class="note">
+          <!-- ✏️ 자기소개 문장을 추가하려면 이 문단을 수정 -->
+          자세한 자기소개는 <span class="todo">준비 중</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 02 관심사 ===================== -->
+<section class="section" id="interest">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-num">02 · INTEREST</div>
+      <h2 class="sec-title">관심사 · 강점 · 배우는 것</h2>
+    </div>
+    <div class="interest">
+      <div class="big-quote reveal">
+        <div class="q">살아가기 위해<br>필요한 <span>모든 것</span></div>
+        <div class="tag">— 1인 가족 생활노트의 관심사</div>
+      </div>
+      <div class="checklist reveal">
+        <h3>나의 생활 체크리스트</h3>
+        <p class="hint">항목을 눌러 체크해 보세요 · 항목은 자유롭게 수정</p>
+        <!-- ✏️ 아래 항목은 예시 틀임. 실제 관심사로 바꿔 쓰면 됨 -->
+        <ul>
+          <li><span class="box"></span>관심사 1 (입력 예정)</li>
+          <li><span class="box"></span>관심사 2 (입력 예정)</li>
+          <li><span class="box"></span>강점 (입력 예정)</li>
+          <li><span class="box"></span>요즘 배우는 것 (입력 예정)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 03 활동 ===================== -->
+<section class="section alt" id="activities">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-num">03 · ACTIVITIES</div>
+      <h2 class="sec-title">워크숍</h2>
+    </div>
+    <div class="acts">
+      <article class="act reveal">
+        <!-- 📷 워크숍 1 사진 자리: <img class="photo" style="aspect-ratio:16/10;border-radius:0" src="workshop1.jpg" alt="워크숍 1 사진"> 으로 교체 -->
+        <div class="ph wide" role="img" aria-label="워크숍 1 사진 자리표시자">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg>
+          워크숍 1 사진
+          <small>workshop1.jpg · 가로 16:10 권장</small>
+        </div>
+        <div class="act-body">
+          <span class="act-no">WORKSHOP 01</span>
+          <h3>1인 가족의 즐거운 생활 워크숍</h3>
+          <p class="key">#즐거운 생활</p>
+          <p class="pending">일정·장소·내용 안내 <span class="todo">준비 중</span></p>
+          <a href="mailto:mojitopink@gmail.com?subject=%5B%EB%AC%B8%EC%9D%98%5D%201%EC%9D%B8%20%EA%B0%80%EC%A1%B1%EC%9D%98%20%EC%A6%90%EA%B1%B0%EC%9A%B4%20%EC%83%9D%ED%99%9C%20%EC%9B%8C%ED%81%AC%EC%88%8D" class="btn btn-ghost">이 워크숍 문의하기 ✉</a>
+        </div>
+      </article>
+
+      <article class="act reveal">
+        <!-- 📷 워크숍 2 사진 자리: <img class="photo" style="aspect-ratio:16/10;border-radius:0" src="workshop2.jpg" alt="워크숍 2 사진"> 으로 교체 -->
+        <div class="ph wide" role="img" aria-label="워크숍 2 사진 자리표시자">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg>
+          워크숍 2 사진
+          <small>workshop2.jpg · 가로 16:10 권장</small>
+        </div>
+        <div class="act-body">
+          <span class="act-no">WORKSHOP 02</span>
+          <h3>1인 가족의 여유로운 생활 워크숍</h3>
+          <p class="key">#여유로운 생활</p>
+          <p class="pending">일정·장소·내용 안내 <span class="todo">준비 중</span></p>
+          <a href="mailto:mojitopink@gmail.com?subject=%5B%EB%AC%B8%EC%9D%98%5D%201%EC%9D%B8%20%EA%B0%80%EC%A1%B1%EC%9D%98%20%EC%97%AC%EC%9C%A0%EB%A1%9C%EC%9A%B4%20%EC%83%9D%ED%99%9C%20%EC%9B%8C%ED%81%AC%EC%88%8D" class="btn btn-ghost">이 워크숍 문의하기 ✉</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 즐겁잖아 (사진) =====================
+     사진 파일(photo1~3.jpg)은 index.html과 같은 폴더에 둠
+     사진 설명은 figcaption 글자를, 크게 볼 때 설명은 data-caption 값을 함께 수정 -->
+<section class="section" id="fun">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-num">04 · FUN</div>
+      <h2 class="sec-title">즐겁잖아</h2>
+    </div>
+    <div class="gallery">
+      <figure class="shot reveal">
+        <button type="button" data-index="0" aria-label="사진 1 크게 보기">
+          <img src="photo1.jpg" alt="사람들 사이에서 두 손을 입에 대고 깜짝 놀란 표정을 짓는 모습" loading="lazy">
+        </button>
+        <figcaption data-caption="두렵지 않아, 팔자주름!">두렵지 않아, 팔자주름!</figcaption>
+      </figure>
+      <figure class="shot reveal">
+        <button type="button" data-index="1" aria-label="사진 2 크게 보기">
+          <img src="photo2.jpg" alt="커다란 동그란 과자로 얼굴을 가린 사람과 그 옆에서 바라보는 사람" loading="lazy">
+        </button>
+        <figcaption data-caption="재능있는 남자">재능있는 남자</figcaption>
+      </figure>
+      <figure class="shot reveal">
+        <button type="button" data-index="2" aria-label="사진 3 크게 보기">
+          <img src="photo3.jpg" alt="기타를 치며 노래하는 사람과 옆에서 함께 노래하는 사람" loading="lazy">
+        </button>
+        <figcaption data-caption="하품하는 거 아니야">하품하는 거 아니야</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 05 연락 ===================== -->
+<section class="section contact" id="contact">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-num">05 · CONTACT</div>
+      <h2 class="sec-title">연락하기</h2>
+    </div>
+    <p class="reveal">워크숍 문의나 이야기 나누고 싶은 내용이 있다면 메일로 연락 주세요.</p>
+    <a class="mail reveal" href="mailto:mojitopink@gmail.com">mojitopink@gmail.com</a>
+    <div class="btns reveal">
+      <a href="mailto:mojitopink@gmail.com" class="btn btn-primary">메일 보내기 ✉</a>
+      <button type="button" class="btn btn-ghost" id="copyBtn" style="cursor:pointer;font:inherit;color:inherit">주소 복사하기</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 06 방명록 (Netlify Forms) =====================
+     Netlify에 올리면 남긴 글이 Netlify 관리 화면 [Forms] 메뉴에 모임 -->
+<section class="section alt" id="guestbook">
+  <div class="wrap">
+    <div class="sec-head reveal" style="text-align:center">
+      <div class="sec-num">06 · GUESTBOOK</div>
+      <h2 class="sec-title">방명록</h2>
+    </div>
+    <div class="guest-card reveal">
+      <form name="guestbook" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="guestForm">
+        <!-- Netlify가 어떤 폼인지 알아보는 데 필요한 숨은 칸 -->
+        <input type="hidden" name="form-name" value="guestbook">
+        <!-- 스팸 방지용 숨은 칸 (사람은 보이지 않음) -->
+        <p class="hidden-field" aria-hidden="true">
+          <label>비워 두세요 <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+        </p>
+
+        <p class="hint">다녀간 흔적을 한 줄 남겨 주세요.</p>
+        <div class="field">
+          <label for="gName">이름</label>
+          <input type="text" id="gName" name="name" maxlength="30" required autocomplete="name" placeholder="이름 또는 별명">
+        </div>
+        <div class="field">
+          <label for="gMsg">남길 말</label>
+          <textarea id="gMsg" name="message" maxlength="500" required placeholder="하고 싶은 말을 적어 주세요"></textarea>
+          <span class="count" id="gCount">0 / 500</span>
+        </div>
+        <div class="guest-actions">
+          <button type="submit" class="btn btn-primary" id="gSubmit">남기기</button>
+        </div>
+      </form>
+      <p class="guest-done" id="guestDone" role="status">💌 남겨 주셔서 고마워요!</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year"></span> 1인 가족 생활노트</span>
+    <a href="#home">맨 위로 ↑</a>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- 오른쪽 아래 BGM 버튼: 같은 폴더의 music.mp3를 반복 재생 -->
+<audio id="bgmAudio" src="music.mp3" loop preload="none"></audio>
+<button type="button" class="bgm" id="bgmBtn" aria-pressed="false" aria-label="배경음악 켜기">
+  <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+  <span>BGM</span>
+</button>
+
+<!-- 사진 크게 보기 창 -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="사진 크게 보기" aria-hidden="true">
+  <button type="button" class="lb-btn lb-close" id="lbClose" aria-label="닫기">✕</button>
+  <button type="button" class="lb-btn lb-prev" id="lbPrev" aria-label="이전 사진">‹</button>
+  <img id="lbImg" src="" alt="">
+  <p class="lb-cap" id="lbCap"></p>
+  <button type="button" class="lb-btn lb-next" id="lbNext" aria-label="다음 사진">›</button>
+</div>
+
+<script>
+  // ===== 글씨 크게·작게 / 어둡게 =====
+  const root = document.documentElement;
+  const SIZES = [87.5, 100, 112.5, 125, 137.5]; // 글씨 크기 단계(%)
+  let sizeIdx = 1;
+  let dark = false;
+  // 지난번 설정 기억 (저장이 안 되는 환경이면 그냥 넘어감)
+  try {
+    const s = parseInt(localStorage.getItem('fontStep'), 10);
+    if (!isNaN(s) && s >= 0 && s < SIZES.length) sizeIdx = s;
+    dark = localStorage.getItem('theme') === 'dark';
+  } catch (e) {}
+
+  const fontUp = document.getElementById('fontUp');
+  const fontDown = document.getElementById('fontDown');
+  const themeBtn = document.getElementById('themeBtn');
+
+  function applySize(){
+    root.style.setProperty('--fs', SIZES[sizeIdx] + '%');
+    fontUp.disabled = sizeIdx === SIZES.length - 1;
+    fontDown.disabled = sizeIdx === 0;
+    try { localStorage.setItem('fontStep', sizeIdx); } catch (e) {}
+  }
+  function applyTheme(){
+    if (dark) root.setAttribute('data-theme', 'dark');
+    else root.removeAttribute('data-theme');
+    themeBtn.setAttribute('aria-pressed', dark);
+    themeBtn.setAttribute('aria-label', dark ? '밝게' : '어둡게');
+    themeBtn.querySelector('.full').textContent = dark ? '밝게' : '어둡게';
+    themeBtn.querySelector('.short').textContent = dark ? '☀️' : '🌙';
+    try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
+  }
+  fontUp.addEventListener('click', () => { if (sizeIdx < SIZES.length - 1) { sizeIdx++; applySize(); } });
+  fontDown.addEventListener('click', () => { if (sizeIdx > 0) { sizeIdx--; applySize(); } });
+  themeBtn.addEventListener('click', () => { dark = !dark; applyTheme(); });
+  applySize();
+  applyTheme();
+
+  // ===== 1인 가족 페스타 D-day (오늘 날짜 기준 자동 계산) =====
+  function updateDday(){
+    const box = document.getElementById('dday');
+    const [y, m, d] = box.dataset.date.split('-').map(Number);
+    const target = new Date(y, m - 1, d);            // 행사일 0시
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // 오늘 0시
+    const days = Math.round((target - today) / 86400000);
+    const name = box.querySelector('.d-name');
+    const count = document.getElementById('ddayCount');
+    if (days > 0) {
+      name.textContent = '🎉 1인 가족 페스타까지';
+      count.textContent = days + '일 남음 (D-' + days + ')';
+    } else if (days === 0) {
+      name.textContent = '🎉 오늘은 1인 가족 페스타';
+      count.textContent = 'D-DAY';
+    } else {
+      name.textContent = '1인 가족 페스타';
+      count.textContent = '종료';
+    }
+  }
+  updateDday();
+  // 페이지를 켜 둔 채 자정이 지나도 다시 계산
+  setInterval(updateDday, 60 * 1000);
+
+  // ===== 오늘 서울 날씨 (Open-Meteo · API 키 없이 무료) =====
+  // 위치를 바꾸려면 위도(latitude)·경도(longitude)와 화면의 '서울' 글자를 수정
+  const WEATHER_URL = 'https://api.open-meteo.com/v1/forecast'
+    + '?latitude=37.5665&longitude=126.9780'
+    + '&current=temperature_2m,weather_code,is_day'
+    + '&timezone=Asia%2FSeoul';
+
+  // 날씨 코드(WMO) → 한글 설명·아이콘
+  function weatherText(code, isDay){
+    if (code === 0) return ['맑음', isDay ? '☀️' : '🌙'];
+    if (code === 1) return ['대체로 맑음', isDay ? '🌤️' : '🌙'];
+    if (code === 2) return ['구름 조금', '⛅'];
+    if (code === 3) return ['흐림', '☁️'];
+    if (code === 45 || code === 48) return ['안개', '🌫️'];
+    if (code >= 51 && code <= 57) return ['이슬비', '🌦️'];
+    if (code >= 61 && code <= 67) return ['비', '🌧️'];
+    if (code >= 71 && code <= 77) return ['눈', '🌨️'];
+    if (code >= 80 && code <= 82) return ['소나기', '🌦️'];
+    if (code === 85 || code === 86) return ['눈', '🌨️'];
+    if (code >= 95) return ['뇌우', '⛈️'];
+    return ['날씨 정보', '🌡️'];
+  }
+
+  async function updateWeather(){
+    const icon = document.getElementById('wIcon');
+    const desc = document.getElementById('wDesc');
+    const temp = document.getElementById('wTemp');
+    try {
+      const res = await fetch(WEATHER_URL);
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      const c = data.current;
+      const [text, emoji] = weatherText(c.weather_code, c.is_day === 1);
+      icon.textContent = emoji;
+      desc.textContent = text;
+      temp.textContent = Math.round(c.temperature_2m) + '°C';
+    } catch (e) {
+      icon.textContent = '🌡️';
+      desc.textContent = '날씨 정보를 불러오지 못함';
+      temp.textContent = '';
+    }
+  }
+  updateWeather();
+  // 30분마다 새로 불러오기
+  setInterval(updateWeather, 30 * 60 * 1000);
+
+  // ===== 즐겁잖아: 사진 누르면 크게 보기 =====
+  const shots = [...document.querySelectorAll('.shot')].map(f => ({
+    src: f.querySelector('img').getAttribute('src'),
+    alt: f.querySelector('img').alt,
+    cap: f.querySelector('figcaption').dataset.caption
+  }));
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbCap = document.getElementById('lbCap');
+  let lbIdx = 0, lastFocus = null;
+
+  function showShot(i){
+    lbIdx = (i + shots.length) % shots.length;
+    lbImg.src = shots[lbIdx].src;
+    lbImg.alt = shots[lbIdx].alt;
+    lbCap.textContent = shots[lbIdx].cap + '  (' + (lbIdx + 1) + ' / ' + shots.length + ')';
+  }
+  function openLb(i){
+    lastFocus = document.activeElement;
+    showShot(i);
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('lbClose').focus();
+  }
+  function closeLb(){
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (lastFocus) lastFocus.focus();
+  }
+  document.querySelectorAll('.shot button').forEach(b =>
+    b.addEventListener('click', () => openLb(Number(b.dataset.index))));
+  document.getElementById('lbClose').addEventListener('click', closeLb);
+  document.getElementById('lbPrev').addEventListener('click', () => showShot(lbIdx - 1));
+  document.getElementById('lbNext').addEventListener('click', () => showShot(lbIdx + 1));
+  lb.addEventListener('click', e => { if (e.target === lb) closeLb(); }); // 바깥 누르면 닫기
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLb();
+    if (e.key === 'ArrowLeft') showShot(lbIdx - 1);
+    if (e.key === 'ArrowRight') showShot(lbIdx + 1);
+  });
+
+  // 연도 자동 표시
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // 모바일 메뉴 열기/닫기
+  const menuBtn = document.querySelector('.menu-btn');
+  const menu = document.getElementById('menu');
+  menuBtn.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open);
+    menuBtn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+  });
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    menu.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+  }));
+
+  // 현재 보고 있는 섹션을 메뉴에 표시
+  const links = [...menu.querySelectorAll('a')];
+  const secObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+      }
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  document.querySelectorAll('main section[id]').forEach(s => secObs.observe(s));
+
+  // 스크롤 등장 효과
+  const revObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revObs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+  // 체크리스트 클릭
+  document.querySelectorAll('.checklist li').forEach(li => {
+    li.setAttribute('role', 'checkbox');
+    li.setAttribute('aria-checked', 'false');
+    li.tabIndex = 0;
+    const toggle = () => li.setAttribute('aria-checked', li.classList.toggle('on'));
+    li.addEventListener('click', toggle);
+    li.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
+  });
+
+  // 이메일 주소 복사
+  const toast = document.getElementById('toast');
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast.t);
+    showToast.t = setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+  // ===== 방명록: Netlify Forms로 보내기 (페이지 이동 없이) =====
+  const guestForm = document.getElementById('guestForm');
+  const gMsg = document.getElementById('gMsg');
+  const gCount = document.getElementById('gCount');
+  const gSubmit = document.getElementById('gSubmit');
+  gMsg.addEventListener('input', () => { gCount.textContent = gMsg.value.length + ' / 500'; });
+  guestForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!guestForm.reportValidity()) return;
+    gSubmit.disabled = true;
+    gSubmit.textContent = '보내는 중…';
+    try {
+      const body = new URLSearchParams(new FormData(guestForm)).toString();
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      });
+      if (!res.ok) throw new Error(res.status);
+      guestForm.reset();
+      gCount.textContent = '0 / 500';
+      guestForm.style.display = 'none';
+      document.getElementById('guestDone').classList.add('show');
+    } catch (err) {
+      showToast('지금은 남길 수 없어요. 잠시 뒤 다시 해 주세요');
+    } finally {
+      gSubmit.disabled = false;
+      gSubmit.textContent = '남기기';
+    }
+  });
+
+  // ===== BGM: 누르면 반복 재생, 다시 누르면 멈춤 =====
+  const bgmAudio = document.getElementById('bgmAudio');
+  const bgmBtn = document.getElementById('bgmBtn');
+  function setBgm(on){
+    bgmBtn.setAttribute('aria-pressed', on);
+    bgmBtn.setAttribute('aria-label', on ? '배경음악 끄기' : '배경음악 켜기');
+  }
+  bgmBtn.addEventListener('click', async () => {
+    if (bgmAudio.paused) {
+      try {
+        await bgmAudio.play();
+        setBgm(true);
+      } catch (e) {
+        setBgm(false);
+        showToast('music.mp3를 재생하지 못했어요');
+      }
+    } else {
+      bgmAudio.pause();
+      setBgm(false);
+    }
+  });
+  bgmAudio.addEventListener('error', () => { setBgm(false); showToast('music.mp3 파일을 찾지 못했어요'); });
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    const email = 'mojitopink@gmail.com';
+    try {
+      await navigator.clipboard.writeText(email);
+      showToast('이메일 주소를 복사했어요');
+    } catch (err) {
+      const ta = document.createElement('textarea');
+      ta.value = email; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); showToast('이메일 주소를 복사했어요'); }
+      catch(e){ showToast(email); }
+      ta.remove();
+    }
+  });
+</script>
+</body>
+</html>
